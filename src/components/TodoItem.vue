@@ -1,9 +1,16 @@
-<script lang="ts" setup></script>
+<script lang="ts" setup>
+function onClickCheckbox() {
+  const checkbox = document.querySelector(".checkbox");
+  if (checkbox) {
+    checkbox.classList.toggle("checked");
+  }
+}
+</script>
 
 <template>
   <div class="todo-item">
     <div class="title-container">
-      <a class="checkbox"></a>
+      <a class="checkbox" @click="onClickCheckbox"></a>
       <span>ToDo Item</span>
     </div>
   </div>
@@ -16,6 +23,7 @@
 }
 
 .checkbox {
+  display: inline-block;
   width: 1rem;
   height: 1rem;
   border: 1px solid orange;
