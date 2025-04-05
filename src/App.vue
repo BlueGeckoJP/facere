@@ -16,6 +16,9 @@ import TodoItem from "./components/TodoItem.vue";
       <TodoItem />
       <TodoItem />
     </div>
+    <div id="completed-todo-container">
+      <TodoItem />
+    </div>
   </div>
 </template>
 
@@ -37,10 +40,27 @@ import TodoItem from "./components/TodoItem.vue";
   margin-bottom: 0.5rem;
 }
 
-#todo-container {
+#todo-container,
+#completed-todo-container {
   display: flex;
   flex-direction: column;
   gap: 0.5rem;
   margin: 1rem;
+}
+
+#completed-todo-container {
+  border-top: 1px solid grey;
+  padding-top: 1rem;
+  position: relative;
+  margin-top: 2rem;
+
+  &::before {
+    content: "Completed";
+    position: absolute;
+    top: -0.7rem;
+    left: 1rem;
+    background: white;
+    padding: 0 0.3rem;
+  }
 }
 </style>
