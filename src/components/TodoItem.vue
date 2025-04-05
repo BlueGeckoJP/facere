@@ -1,9 +1,7 @@
 <script lang="ts" setup>
 function onClickCheckbox(payload: MouseEvent) {
-  const checkbox = payload.target;
-  if (checkbox) {
-    (checkbox as HTMLAnchorElement).classList.toggle("checked");
-  }
+  const checkbox = payload.target as HTMLAnchorElement;
+  checkbox.classList.toggle("checked");
 }
 </script>
 
