@@ -3,8 +3,7 @@ const props = defineProps(["uuid", "checked", "title"]);
 const checkedEmit = defineEmits(["checked"]);
 
 function onClickCheckbox(_: MouseEvent) {
-  const checkbox = document.querySelector(".checkbox") as HTMLAnchorElement;
-  checkedEmit("checked", props.uuid, checkbox.classList.contains("checked"));
+  checkedEmit("checked", props.uuid, props.checked);
 }
 </script>
 
@@ -12,7 +11,8 @@ function onClickCheckbox(_: MouseEvent) {
   <div class="todo-item">
     <div class="title-container">
       <a
-        class="checkbox {{ props.checked ? 'checked' : '' }}"
+        class="checkbox"
+        :class="{ checked: props.checked }"
         @click="onClickCheckbox"
       ></a>
       <span>{{ props.title }}</span>

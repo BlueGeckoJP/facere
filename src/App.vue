@@ -2,21 +2,37 @@
 import { ref } from "vue";
 import TodoItem from "./components/TodoItem.vue";
 
+type TodoState = {
+  title: string;
+};
+
 // TODO: Use uuid for identification
 
-const todoList = ref([1, 2, 3, 4, 5]);
-const completedTodoList = ref([6, 7]);
+const todoList = ref(new Map<number, TodoState>());
+const completedTodoList = ref(new Map<number, TodoState>());
 
-// TODO: Rewrite this, it has a bug
+todoList.value.set(1, { title: "Test" });
+todoList.value.set(2, { title: "Test2" });
+completedTodoList.value.set(3, { title: "Test3" });
+
 function onEmitChecked(uuid: number, checked: boolean) {
-  if (checked) {
-    todoList.value.splice(todoList.value.indexOf(uuid), 1);
-    completedTodoList.value.push(uuid);
-  } else {
-    completedTodoList.value.splice(completedTodoList.value.indexOf(uuid), 1);
-    todoList.value.push(uuid);
-  }
+  console.log(uuid, checked);
   console.log(todoList, completedTodoList);
+  if (!checked) {
+    let todoItem = todoList.value.get(uuid);
+    if (todoItem) {
+      todoList.value.delete(uuid);
+      completedTodoList.value.set(uuid, todoItem);
+    }
+    console.log(todoItem);
+  } else {
+    let todoItem = completedTodoList.value.get(uuid);
+    if (todoItem) {
+      completedTodoList.value.delete(uuid);
+      todoList.value.set(uuid, todoItem);
+    }
+    console.log(todoItem);
+  }
 }
 </script>
 
@@ -32,20 +48,20 @@ function onEmitChecked(uuid: number, checked: boolean) {
     <div id="todo-container">
       <TodoItem
         v-for="todo in todoList"
-        :key="todo"
-        :uuid="todo"
+        :key="todo[0]"
+        :uuid="todo[0]"
         :checked="false"
-        :title="'Test Item'"
+        :title="todo[1].title"
         @checked="onEmitChecked"
       />
     </div>
     <div id="completed-todo-container">
       <TodoItem
         v-for="todo in completedTodoList"
-        :key="todo"
-        :uuid="todo"
+        :key="todo[0]"
+        :uuid="todo[0]"
         :checked="true"
-        :title="'Test Completed Item'"
+        :title="todo[1].title"
         @checked="onEmitChecked"
       />
     </div>
