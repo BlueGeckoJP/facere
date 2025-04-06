@@ -1,4 +1,5 @@
 <script lang="ts" setup>
+import { v4 as uuidv4 } from "uuid";
 import { ref } from "vue";
 import TodoItem from "./components/TodoItem.vue";
 
@@ -6,16 +7,18 @@ type TodoState = {
   title: string;
 };
 
+type UUID = string;
+
 // TODO: Use uuid for identification
 
-const todoList = ref(new Map<number, TodoState>());
-const completedTodoList = ref(new Map<number, TodoState>());
+const todoList = ref(new Map<UUID, TodoState>());
+const completedTodoList = ref(new Map<UUID, TodoState>());
 
-todoList.value.set(1, { title: "Test" });
-todoList.value.set(2, { title: "Test2" });
-completedTodoList.value.set(3, { title: "Test3" });
+todoList.value.set(uuidv4(), { title: "Test" });
+todoList.value.set(uuidv4(), { title: "Test2" });
+completedTodoList.value.set(uuidv4(), { title: "Test3" });
 
-function onEmitChecked(uuid: number, checked: boolean) {
+function onEmitChecked(uuid: UUID, checked: boolean) {
   console.log(uuid, checked);
   console.log(todoList, completedTodoList);
   if (!checked) {
