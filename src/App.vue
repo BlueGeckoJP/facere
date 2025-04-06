@@ -6,10 +6,7 @@ import TodoItem from "./components/TodoItem.vue";
 type TodoState = {
   title: string;
 };
-
 type UUID = string;
-
-// TODO: Use uuid for identification
 
 const todoList = ref(new Map<UUID, TodoState>());
 const completedTodoList = ref(new Map<UUID, TodoState>());
