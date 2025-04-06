@@ -7,6 +7,7 @@ import TodoItem from "./components/TodoItem.vue";
 const todoList = ref([1, 2, 3, 4, 5]);
 const completedTodoList = ref([6, 7]);
 
+// TODO: Rewrite this, it has a bug
 function onEmitChecked(uuid: number, checked: boolean) {
   if (checked) {
     todoList.value.splice(todoList.value.indexOf(uuid), 1);
@@ -33,6 +34,8 @@ function onEmitChecked(uuid: number, checked: boolean) {
         v-for="todo in todoList"
         :key="todo"
         :uuid="todo"
+        :checked="false"
+        :title="'Test Item'"
         @checked="onEmitChecked"
       />
     </div>
@@ -41,6 +44,8 @@ function onEmitChecked(uuid: number, checked: boolean) {
         v-for="todo in completedTodoList"
         :key="todo"
         :uuid="todo"
+        :checked="true"
+        :title="'Test Completed Item'"
         @checked="onEmitChecked"
       />
     </div>

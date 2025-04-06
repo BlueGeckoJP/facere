@@ -1,10 +1,9 @@
 <script lang="ts" setup>
-const props = defineProps(["uuid"]);
+const props = defineProps(["uuid", "checked", "title"]);
 const checkedEmit = defineEmits(["checked"]);
 
-function onClickCheckbox(payload: MouseEvent) {
-  const checkbox = payload.target as HTMLAnchorElement;
-  checkbox.classList.toggle("checked");
+function onClickCheckbox(_: MouseEvent) {
+  const checkbox = document.querySelector(".checkbox") as HTMLAnchorElement;
   checkedEmit("checked", props.uuid, checkbox.classList.contains("checked"));
 }
 </script>
@@ -12,8 +11,11 @@ function onClickCheckbox(payload: MouseEvent) {
 <template>
   <div class="todo-item">
     <div class="title-container">
-      <a class="checkbox" @click="onClickCheckbox"></a>
-      <span>ToDo Item</span>
+      <a
+        class="checkbox {{ props.checked ? 'checked' : '' }}"
+        @click="onClickCheckbox"
+      ></a>
+      <span>{{ props.title }}</span>
     </div>
   </div>
 </template>
