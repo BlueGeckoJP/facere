@@ -1,7 +1,11 @@
 <script lang="ts" setup>
+const props = defineProps(["uuid"]);
+const checkedEmit = defineEmits(["checked"]);
+
 function onClickCheckbox(payload: MouseEvent) {
   const checkbox = payload.target as HTMLAnchorElement;
   checkbox.classList.toggle("checked");
+  checkedEmit("checked", props.uuid, checkbox.classList.contains("checked"));
 }
 </script>
 

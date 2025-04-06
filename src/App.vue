@@ -1,5 +1,22 @@
 <script lang="ts" setup>
+import { ref } from "vue";
 import TodoItem from "./components/TodoItem.vue";
+
+// TODO: Use uuid for identification
+
+const todoList = ref([1, 2, 3, 4, 5]);
+const completedTodoList = ref([6, 7]);
+
+function onEmitChecked(uuid: number, checked: boolean) {
+  if (checked) {
+    todoList.value.splice(todoList.value.indexOf(uuid), 1);
+    completedTodoList.value.push(uuid);
+  } else {
+    completedTodoList.value.splice(completedTodoList.value.indexOf(uuid), 1);
+    todoList.value.push(uuid);
+  }
+  console.log(todoList, completedTodoList);
+}
 </script>
 
 <template>
@@ -12,12 +29,20 @@ import TodoItem from "./components/TodoItem.vue";
       </div>
     </div>
     <div id="todo-container">
-      <TodoItem />
-      <TodoItem />
-      <TodoItem />
+      <TodoItem
+        v-for="todo in todoList"
+        :key="todo"
+        :uuid="todo"
+        @checked="onEmitChecked"
+      />
     </div>
     <div id="completed-todo-container">
-      <TodoItem />
+      <TodoItem
+        v-for="todo in completedTodoList"
+        :key="todo"
+        :uuid="todo"
+        @checked="onEmitChecked"
+      />
     </div>
   </div>
 </template>
