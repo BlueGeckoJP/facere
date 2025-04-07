@@ -5,7 +5,9 @@ import { ref } from "vue";
 import TodoItem from "./components/TodoItem.vue";
 
 // test command
-invoke("get_todos").then((todos) => console.log(todos));
+invoke("get_todos")
+  .then((todos) => console.log(todos))
+  .catch((e) => console.log(e));
 
 type TodoState = {
   title: string;

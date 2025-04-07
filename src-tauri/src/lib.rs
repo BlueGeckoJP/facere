@@ -28,6 +28,9 @@ pub fn run() {
 }
 
 #[tauri::command]
-fn get_todos(state: tauri::State<AppState>) -> Vec<SqlTodo> {
-    state.sql_manager.get_todos().unwrap()
+fn get_todos(state: tauri::State<AppState>) -> Result<Vec<SqlTodo>, String> {
+    match state.sql_manager.get_todos() {
+        Ok(todos) => Ok(todos),
+        Err(e) => Err(e.to_string()),
+    }
 }
