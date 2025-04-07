@@ -1,10 +1,14 @@
-use anyhow::{Ok, Result};
+use std::sync::{Arc, Mutex};
+
+use anyhow::{anyhow, Ok, Result};
 use rusqlite::Connection;
+use serde::{Deserialize, Serialize};
 
 pub struct SqlManager {
-    pub conn: Connection,
+    pub conn: Arc<Mutex<Connection>>,
 }
 
+#[derive(Serialize, Deserialize)]
 pub struct SqlTodo {
     pub uuid: String,
     pub title: String,
@@ -26,25 +30,38 @@ impl SqlManager {
             [],
         )?;
 
-        Ok(Self { conn })
+        Ok(Self {
+            conn: Arc::new(Mutex::new(conn)),
+        })
     }
 
     pub fn add_test_todos(&self) -> Result<()> {
-        self.conn.execute(
-            "INSERT INTO todo (uuid, title, checked, deadline) VALUES
+        let conn = self.conn.try_lock();
+        if let std::result::Result::Ok(conn) = conn {
+            conn.execute(
+                "INSERT INTO todo (uuid, title, checked, deadline) VALUES
                 ('1', 'Test1', 0, '2025/01/01'),
                 ('2', 'Test2', 0, '2025/01/01'),
                 ('3', 'Test3', 1, '2025/01/01')",
-            [],
-        )?;
+                [],
+            )?;
+        } else {
+            return Err(anyhow!("Failed to lock connection"));
+        }
 
         Ok(())
     }
 
     pub fn get_todos(&self) -> Result<Vec<SqlTodo>> {
-        let mut stmt = self
-            .conn
-            .prepare("SELECT uuid, title, checked, deadline FROM todo")?;
+        let conn = self.conn.try_lock();
+
+        if let std::result::Result::Err(e) = &conn {
+            return Err(anyhow!("Failed to lock connection: {}", e));
+        }
+
+        let conn = conn.unwrap();
+
+        let mut stmt = conn.prepare("SELECT uuid, title, checked, deadline FROM todo")?;
 
         let todos = stmt.query_map([], |row| {
             std::result::Result::Ok(SqlTodo {

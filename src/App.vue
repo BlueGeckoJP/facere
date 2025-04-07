@@ -1,7 +1,11 @@
 <script lang="ts" setup>
+import { invoke } from "@tauri-apps/api/core";
 import { v4 as uuidv4 } from "uuid";
 import { ref } from "vue";
 import TodoItem from "./components/TodoItem.vue";
+
+// test command
+invoke("get_todos").then((todos) => console.log(todos));
 
 type TodoState = {
   title: string;
