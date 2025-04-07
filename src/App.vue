@@ -1,25 +1,33 @@
 <script lang="ts" setup>
 import { invoke } from "@tauri-apps/api/core";
-import { v4 as uuidv4 } from "uuid";
 import { ref } from "vue";
 import TodoItem from "./components/TodoItem.vue";
 
-// test command
-invoke("get_todos")
-  .then((todos) => console.log(todos))
-  .catch((e) => console.log(e));
+type SqlTodo = {
+  uuid: string;
+  title: string;
+  checked: boolean;
+  deadline: string;
+};
 
 type TodoState = {
   title: string;
 };
+
 type UUID = string;
 
 const todoList = ref(new Map<UUID, TodoState>());
 const completedTodoList = ref(new Map<UUID, TodoState>());
 
-todoList.value.set(uuidv4(), { title: "Test" });
-todoList.value.set(uuidv4(), { title: "Test2" });
-completedTodoList.value.set(uuidv4(), { title: "Test3" });
+invoke("get_todos")
+  .then((t) => {
+    let todos = t as [SqlTodo];
+
+    todos.forEach((todo) => {
+      todoList.value.set(todo.uuid, { title: todo.title });
+    });
+  })
+  .catch((e) => console.log(e));
 
 function onEmitChecked(uuid: UUID, checked: boolean) {
   console.log(uuid, checked);

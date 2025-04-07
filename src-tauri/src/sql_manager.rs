@@ -40,9 +40,9 @@ impl SqlManager {
         if let std::result::Result::Ok(conn) = conn {
             conn.execute(
                 "INSERT INTO todo (uuid, title, checked, deadline) VALUES
-                ('1', 'Test1', 0, '2025/01/01'),
-                ('2', 'Test2', 0, '2025/01/01'),
-                ('3', 'Test3', 1, '2025/01/01')",
+                ('1', 'Test1 From SQL', 0, '2025/01/01'),
+                ('2', 'Test2 From Rust', 0, '2025/01/01'),
+                ('3', 'Test3 From Backend', 1, '2025/01/01')",
                 [],
             )?;
         } else {
