@@ -1,4 +1,7 @@
-use std::sync::{Arc, Mutex};
+use std::{
+    path::PathBuf,
+    sync::{Arc, Mutex},
+};
 
 use anyhow::{anyhow, Ok, Result};
 use rusqlite::Connection;
@@ -18,7 +21,14 @@ pub struct SqlTodo {
 
 impl SqlManager {
     pub fn new() -> Result<Self> {
-        let conn = Connection::open_in_memory()?;
+        let save_dir: PathBuf = if !cfg!(debug_assertions) {
+            todo!()
+        } else {
+            PathBuf::from("../test_save_dir")
+        }
+        .join("data.db");
+
+        let conn = Connection::open(save_dir)?;
 
         conn.execute(
             "CREATE TABLE todo (
