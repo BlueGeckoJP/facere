@@ -30,15 +30,20 @@ impl SqlManager {
 
         let conn = Connection::open(save_dir)?;
 
-        conn.execute(
-            "CREATE TABLE todo (
+        if conn
+            .execute(
+                "CREATE TABLE todo (
                 uuid TEXT PRIMARY KEY,
                 title TEXT NOT NULL,
                 checked BOOLEAN NOT NULL,
                 deadline TEXT NOT NULL
             )",
-            [],
-        )?;
+                [],
+            )
+            .is_ok()
+        {
+            println!("Created todo table")
+        }
 
         Ok(Self {
             conn: Arc::new(Mutex::new(conn)),
@@ -48,13 +53,18 @@ impl SqlManager {
     pub fn add_test_todos(&self) -> Result<()> {
         let conn = self.conn.try_lock();
         if let std::result::Result::Ok(conn) = conn {
-            conn.execute(
-                "INSERT INTO todo (uuid, title, checked, deadline) VALUES
+            if conn
+                .execute(
+                    "INSERT INTO todo (uuid, title, checked, deadline) VALUES
                 ('1', 'Test1 From SQL', 0, '2025/01/01'),
                 ('2', 'Test2 From Rust', 0, '2025/01/01'),
                 ('3', 'Test3 From Backend', 1, '2025/01/01')",
-                [],
-            )?;
+                    [],
+                )
+                .is_ok()
+            {
+                println!("Added test todos");
+            }
         } else {
             return Err(anyhow!("Failed to lock connection"));
         }
