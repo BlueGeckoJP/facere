@@ -1,6 +1,7 @@
 <script lang="ts" setup>
 import { invoke } from "@tauri-apps/api/core";
 import { ref } from "vue";
+import AddTodo from "./components/AddTodo.vue";
 import TodoItem from "./components/TodoItem.vue";
 
 type SqlTodo = {
@@ -68,10 +69,7 @@ function onEmitChecked(uuid: UUID, checked: boolean) {
         :title="todo[1].title"
         @checked="onEmitChecked"
       />
-      <a id="add-todo-button">
-        <div></div>
-        <span>Add Todo</span>
-      </a>
+      <AddTodo />
     </div>
     <div id="completed-todo-container">
       <TodoItem
@@ -125,21 +123,6 @@ function onEmitChecked(uuid: UUID, checked: boolean) {
     left: 1rem;
     background: white;
     padding: 0 0.3rem;
-  }
-}
-
-#add-todo-button {
-  display: flex;
-  align-items: center;
-
-  div {
-    display: inline-block;
-    width: 1rem;
-    height: 1rem;
-    border: 1px solid navy;
-    border-radius: 50%;
-    position: relative;
-    margin-right: 0.5rem;
   }
 }
 </style>
