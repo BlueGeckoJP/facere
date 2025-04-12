@@ -1,9 +1,34 @@
-<script setup lang="ts"></script>
+<script setup lang="ts">
+import { invoke } from "@tauri-apps/api/core";
+import { v4 as uuidv4 } from "uuid";
+import { ref } from "vue";
+
+const buttonRef = ref();
+const inputRef = ref();
+
+function onClick() {
+  let input = inputRef.value as HTMLInputElement;
+
+  invoke("add_todo", {
+    uuid: uuidv4(),
+    title: input.value,
+    checked: false,
+    deadline: new Date().toISOString(),
+  })
+    .then(() => {
+      console.log("Added todo");
+      input.value = "";
+    })
+    .catch((e) => {
+      alert("Failed to add todo. Error: " + e);
+    });
+}
+</script>
 
 <template>
   <div id="add-todo">
-    <button>Add</button>
-    <input type="text" placeholder="Title" />
+    <button ref="buttonRef" @click="onClick">Add</button>
+    <input type="text" placeholder="Title" ref="inputRef" />
   </div>
 </template>
 

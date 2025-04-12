@@ -20,15 +20,19 @@ type UUID = string;
 const todoList = ref(new Map<UUID, TodoState>());
 const completedTodoList = ref(new Map<UUID, TodoState>());
 
-invoke("get_todos")
-  .then((t) => {
-    let todos = t as [SqlTodo];
+function updateTodos() {
+  invoke("get_todos")
+    .then((t) => {
+      let todos = t as [SqlTodo];
 
-    todos.forEach((todo) => {
-      todoList.value.set(todo.uuid, { title: todo.title });
-    });
-  })
-  .catch((e) => console.log(e));
+      todos.forEach((todo) => {
+        todoList.value.set(todo.uuid, { title: todo.title });
+      });
+    })
+    .catch((e) => console.log(e));
+}
+
+updateTodos();
 
 function onEmitChecked(uuid: UUID, checked: boolean) {
   console.log(uuid, checked);

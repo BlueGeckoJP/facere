@@ -96,4 +96,31 @@ impl SqlManager {
 
         Ok(todos_vec)
     }
+
+    pub fn add_todo(&self, todo: SqlTodo) -> Result<()> {
+        let conn = self.conn.try_lock();
+
+        if let std::result::Result::Err(e) = &conn {
+            return Err(anyhow!("Failed to lock connection: {}", e));
+        }
+
+        let conn = conn.unwrap();
+
+        if conn
+            .execute(
+                "INSERT INTO todo (uuid, title, checked, deadline) VALUES (?, ?, ?, ?)",
+                [
+                    todo.uuid,
+                    todo.title,
+                    todo.checked.to_string(),
+                    todo.deadline,
+                ],
+            )
+            .is_ok()
+        {
+            return Ok(());
+        }
+
+        Err(anyhow!("Failed to add todo"))
+    }
 }
