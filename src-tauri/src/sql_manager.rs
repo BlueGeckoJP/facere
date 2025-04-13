@@ -4,7 +4,7 @@ use std::{
 };
 
 use anyhow::{anyhow, Ok, Result};
-use rusqlite::Connection;
+use rusqlite::{params, Connection};
 use serde::{Deserialize, Serialize};
 
 pub struct SqlManager {
@@ -104,23 +104,20 @@ impl SqlManager {
             return Err(anyhow!("Failed to lock connection: {}", e));
         }
 
-        let conn = conn.unwrap();
+        let mut conn = conn.unwrap();
 
-        if conn
-            .execute(
-                "INSERT INTO todo (uuid, title, checked, deadline) VALUES (?, ?, ?, ?)",
-                [
-                    todo.uuid,
-                    todo.title,
-                    todo.checked.to_string(),
-                    todo.deadline,
-                ],
-            )
-            .is_ok()
-        {
-            return Ok(());
-        }
+        let tx = conn.transaction()?;
 
-        Err(anyhow!("Failed to add todo"))
+        let mut stmt = tx.prepare(
+            "INSERT INTO todo (uuid, title, checked, deadline)
+            VALUES (?, ?, ?, ?);",
+        )?;
+
+        stmt.execute(params![todo.uuid, todo.title, todo.checked, todo.deadline,])?;
+
+        stmt.finalize()?;
+        tx.commit()?;
+
+        Ok(())
     }
 }

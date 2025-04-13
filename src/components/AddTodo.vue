@@ -3,6 +3,13 @@ import { invoke } from "@tauri-apps/api/core";
 import { v4 as uuidv4 } from "uuid";
 import { ref } from "vue";
 
+const props = defineProps({
+  updateTodos: {
+    type: Function,
+    required: true,
+  },
+});
+
 const buttonRef = ref();
 const inputRef = ref();
 
@@ -22,6 +29,8 @@ function onClick() {
     .catch((e) => {
       alert("Failed to add todo. Error: " + e);
     });
+
+  props.updateTodos();
 }
 </script>
 

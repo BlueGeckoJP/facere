@@ -73,7 +73,7 @@ function onEmitChecked(uuid: UUID, checked: boolean) {
         :title="todo[1].title"
         @checked="onEmitChecked"
       />
-      <AddTodo />
+      <AddTodo :updateTodos="updateTodos" />
     </div>
     <div id="completed-todo-container">
       <TodoItem
