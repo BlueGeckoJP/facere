@@ -17,10 +17,12 @@ function onClick() {
   let input = inputRef.value as HTMLInputElement;
 
   invoke("add_todo", {
-    uuid: uuidv4(),
-    title: input.value,
-    checked: false,
-    deadline: new Date().toISOString(),
+    todo: {
+      uuid: uuidv4(),
+      title: input.value,
+      checked: false,
+      deadline: new Date().toISOString(),
+    },
   })
     .then(() => {
       console.log("Added todo");

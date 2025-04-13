@@ -36,19 +36,8 @@ fn get_todos(state: tauri::State<AppState>) -> Result<Vec<SqlTodo>, String> {
 }
 
 #[tauri::command(rename_all = "snake_case")]
-fn add_todo(
-    state: tauri::State<AppState>,
-    uuid: String,
-    title: String,
-    checked: bool,
-    deadline: String,
-) -> Result<(), String> {
-    match state.sql_manager.add_todo(SqlTodo {
-        uuid,
-        title,
-        checked,
-        deadline,
-    }) {
+fn add_todo(state: tauri::State<AppState>, todo: SqlTodo) -> Result<(), String> {
+    match state.sql_manager.add_todo(todo) {
         Ok(_) => Ok(()),
         Err(e) => Err(e.to_string()),
     }
