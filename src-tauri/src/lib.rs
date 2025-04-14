@@ -22,7 +22,7 @@ pub fn run() {
     tauri::Builder::default()
         .manage(app_state)
         .plugin(tauri_plugin_opener::init())
-        .invoke_handler(tauri::generate_handler![get_todos, add_todo])
+        .invoke_handler(tauri::generate_handler![get_todos, add_todo, check_todo])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
 }
@@ -38,6 +38,14 @@ fn get_todos(state: tauri::State<AppState>) -> Result<Vec<SqlTodo>, String> {
 #[tauri::command(rename_all = "snake_case")]
 fn add_todo(state: tauri::State<AppState>, todo: SqlTodo) -> Result<(), String> {
     match state.sql_manager.add_todo(todo) {
+        Ok(_) => Ok(()),
+        Err(e) => Err(e.to_string()),
+    }
+}
+
+#[tauri::command(rename_all = "snake_case")]
+fn check_todo(state: tauri::State<AppState>, uuid: String) -> Result<(), String> {
+    match state.sql_manager.check_todo(uuid) {
         Ok(_) => Ok(()),
         Err(e) => Err(e.to_string()),
     }

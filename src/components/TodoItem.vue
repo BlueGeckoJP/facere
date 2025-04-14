@@ -3,7 +3,7 @@ const props = defineProps(["uuid", "checked", "title"]);
 const checkedEmit = defineEmits(["checked"]);
 
 function onClickCheckbox(_: MouseEvent) {
-  checkedEmit("checked", props.uuid, props.checked);
+  checkedEmit("checked", props.uuid);
 }
 </script>
 

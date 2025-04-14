@@ -36,7 +36,7 @@ impl SqlManager {
                 uuid TEXT PRIMARY KEY,
                 title TEXT NOT NULL,
                 checked BOOLEAN NOT NULL,
-                deadline TEXT NOT NULL
+                deadline TEXT NOT NULL;
             )",
                 [],
             )
@@ -58,7 +58,7 @@ impl SqlManager {
                     "INSERT INTO todo (uuid, title, checked, deadline) VALUES
                 ('1', 'Test1 From SQL', 0, '2025/01/01'),
                 ('2', 'Test2 From Rust', 0, '2025/01/01'),
-                ('3', 'Test3 From Backend', 1, '2025/01/01')",
+                ('3', 'Test3 From Backend', 1, '2025/01/01');",
                     [],
                 )
                 .is_ok()
@@ -81,7 +81,7 @@ impl SqlManager {
 
         let conn = conn.unwrap();
 
-        let mut stmt = conn.prepare("SELECT uuid, title, checked, deadline FROM todo")?;
+        let mut stmt = conn.prepare("SELECT uuid, title, checked, deadline FROM todo;")?;
 
         let todos = stmt.query_map([], |row| {
             std::result::Result::Ok(SqlTodo {
@@ -114,6 +114,33 @@ impl SqlManager {
         )?;
 
         stmt.execute(params![todo.uuid, todo.title, todo.checked, todo.deadline,])?;
+
+        stmt.finalize()?;
+        tx.commit()?;
+
+        Ok(())
+    }
+
+    pub fn check_todo(&self, uuid: String) -> Result<()> {
+        let conn = self.conn.try_lock();
+
+        if let std::result::Result::Err(e) = &conn {
+            return Err(anyhow!("Failed to lock connection: {}", e));
+        }
+
+        let mut conn = conn.unwrap();
+
+        let mut r_stmt = conn.prepare("SELECT checked FROM todo WHERE uuid = ?;")?;
+
+        let checked: bool = r_stmt.query_row(params![uuid], |row| row.get(0))?;
+
+        r_stmt.finalize()?;
+
+        let tx = conn.transaction()?;
+
+        let mut stmt = tx.prepare("UPDATE todo SET checked = ? WHERE uuid = ?;")?;
+
+        stmt.execute(params![!checked, uuid])?;
 
         stmt.finalize()?;
         tx.commit()?;

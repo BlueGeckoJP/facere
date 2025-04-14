@@ -25,33 +25,25 @@ function updateTodos() {
     .then((t) => {
       let todos = t as [SqlTodo];
 
+      todoList.value.clear();
+      completedTodoList.value.clear();
+
       todos.forEach((todo) => {
-        todoList.value.set(todo.uuid, { title: todo.title });
+        if (todo.checked) {
+          completedTodoList.value.set(todo.uuid, todo);
+        } else {
+          todoList.value.set(todo.uuid, todo);
+        }
       });
     })
-    .catch((e) => console.log(e));
+    .catch((e) => alert(e));
 }
 
 updateTodos();
 
-function onEmitChecked(uuid: UUID, checked: boolean) {
-  console.log(uuid, checked);
-  console.log(todoList, completedTodoList);
-  if (!checked) {
-    let todoItem = todoList.value.get(uuid);
-    if (todoItem) {
-      todoList.value.delete(uuid);
-      completedTodoList.value.set(uuid, todoItem);
-    }
-    console.log(todoItem);
-  } else {
-    let todoItem = completedTodoList.value.get(uuid);
-    if (todoItem) {
-      completedTodoList.value.delete(uuid);
-      todoList.value.set(uuid, todoItem);
-    }
-    console.log(todoItem);
-  }
+function onEmitChecked(uuid: UUID) {
+  invoke("check_todo", { uuid: uuid }).catch((e) => alert(e));
+  updateTodos();
 }
 </script>
 
