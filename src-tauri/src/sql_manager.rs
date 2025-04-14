@@ -147,4 +147,25 @@ impl SqlManager {
 
         Ok(())
     }
+
+    pub fn delete_todo(&self, uuid: String) -> Result<()> {
+        let conn = self.conn.try_lock();
+
+        if let std::result::Result::Err(e) = &conn {
+            return Err(anyhow!("Failed to lock connection: {}", e));
+        }
+
+        let mut conn = conn.unwrap();
+
+        let tx = conn.transaction()?;
+
+        let mut stmt = tx.prepare("DELETE FROM todo WHERE uuid = ?;")?;
+
+        stmt.execute(params![uuid])?;
+
+        stmt.finalize()?;
+        tx.commit()?;
+
+        Ok(())
+    }
 }

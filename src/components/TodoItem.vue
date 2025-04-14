@@ -1,9 +1,37 @@
 <script lang="ts" setup>
-const props = defineProps(["uuid", "checked", "title"]);
+import { faTrash } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
+import { invoke } from "@tauri-apps/api/core";
+
+const props = defineProps({
+  uuid: {
+    type: String,
+    required: true,
+  },
+  title: {
+    type: String,
+    required: true,
+  },
+  checked: {
+    type: Boolean,
+    required: true,
+  },
+  updateTodos: {
+    type: Function,
+    required: true,
+  },
+});
 const checkedEmit = defineEmits(["checked"]);
 
 function onClickCheckbox(_: MouseEvent) {
   checkedEmit("checked", props.uuid);
+}
+
+function onClickTrash(_: MouseEvent) {
+  confirm("Are you sure you want to delete it?") &&
+    invoke("delete_todo", { uuid: props.uuid }).catch((e) => alert(e));
+
+  props.updateTodos();
 }
 </script>
 
@@ -15,6 +43,9 @@ function onClickCheckbox(_: MouseEvent) {
         :class="{ checked: props.checked }"
         @click="onClickCheckbox"
       ></a>
+      <a class="trash" @click="onClickTrash">
+        <FontAwesomeIcon :icon="faTrash" />
+      </a>
       <span>{{ props.title }}</span>
     </div>
   </div>
@@ -46,6 +77,14 @@ function onClickCheckbox(_: MouseEvent) {
     border-right: 1px solid orange;
     border-bottom: 1px solid orange;
     transform: rotate(45deg);
+  }
+}
+
+.trash {
+  margin-right: 0.5rem;
+
+  svg {
+    color: orange;
   }
 }
 </style>

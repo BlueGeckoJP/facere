@@ -97,6 +97,7 @@ onUnmounted(() => {
         :uuid="todo[0]"
         :checked="false"
         :title="todo[1].title"
+        :update-todos="updateTodos"
         @checked="onEmitChecked"
       />
       <AddTodo :updateTodos="updateTodos" />
@@ -108,6 +109,7 @@ onUnmounted(() => {
         :uuid="todo[0]"
         :checked="true"
         :title="todo[1].title"
+        :update-todos="updateTodos"
         @checked="onEmitChecked"
       />
     </div>
