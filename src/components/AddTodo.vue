@@ -48,6 +48,7 @@ function onClick() {
   padding: 0.5rem;
   border: 1px solid grey;
   border-radius: 15px;
+  margin-top: 0.5rem;
   margin-right: auto;
 
   input {
