@@ -20,6 +20,14 @@ type UUID = string;
 const todoList = ref(new Map<UUID, TodoState>());
 const completedTodoList = ref(new Map<UUID, TodoState>());
 
+const nowDate = new Intl.DateTimeFormat("en-GB", {
+  timeZone: "Asia/Tokyo",
+  year: "numeric",
+  month: "2-digit",
+  day: "2-digit",
+  weekday: "short",
+}).format(new Date());
+
 function updateTodos() {
   invoke("get_todos")
     .then((t) => {
@@ -52,7 +60,7 @@ function onEmitChecked(uuid: UUID) {
     <div id="title-container">
       <p id="today-title">Today's ToDo</p>
       <div id="subtitle-container">
-        <p>2025/01/01 Wed</p>
+        <p>{{ nowDate }}</p>
         <p>1 / 1 Task Completed</p>
       </div>
     </div>
