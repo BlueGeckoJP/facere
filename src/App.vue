@@ -51,7 +51,11 @@ function updateTodos() {
     .catch((e) => alert(e));
 }
 
-updateTodos();
+function updateCount() {
+  let count = todoList.value.size + completedTodoList.value.size;
+  let completedCount = completedTodoList.value.size;
+  return `${completedCount} / ${count} Task Completed`;
+}
 
 function onEmitChecked(uuid: UUID) {
   invoke("check_todo", { uuid: uuid }).catch((e) => alert(e));
@@ -59,6 +63,8 @@ function onEmitChecked(uuid: UUID) {
 }
 
 onMounted(() => {
+  updateTodos();
+
   dateInterval = setInterval(() => {
     nowDate.value = new Intl.DateTimeFormat("en-GB", {
       timeZone: "Asia/Tokyo",
@@ -81,7 +87,7 @@ onUnmounted(() => {
       <p id="today-title">Today's ToDo</p>
       <div id="subtitle-container">
         <p>{{ nowDate }}</p>
-        <p>1 / 1 Task Completed</p>
+        <p>{{ updateCount() }}</p>
       </div>
     </div>
     <div id="todo-container">
