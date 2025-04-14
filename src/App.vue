@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import { invoke } from "@tauri-apps/api/core";
-import { ref } from "vue";
+import { onMounted, onUnmounted, ref } from "vue";
 import AddTodo from "./components/AddTodo.vue";
 import TodoItem from "./components/TodoItem.vue";
 
@@ -20,13 +20,17 @@ type UUID = string;
 const todoList = ref(new Map<UUID, TodoState>());
 const completedTodoList = ref(new Map<UUID, TodoState>());
 
-const nowDate = new Intl.DateTimeFormat("en-GB", {
-  timeZone: "Asia/Tokyo",
-  year: "numeric",
-  month: "2-digit",
-  day: "2-digit",
-  weekday: "short",
-}).format(new Date());
+const nowDate = ref(
+  new Intl.DateTimeFormat("en-GB", {
+    timeZone: "Asia/Tokyo",
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+    weekday: "short",
+  }).format(new Date())
+);
+
+let dateInterval: number;
 
 function updateTodos() {
   invoke("get_todos")
@@ -53,6 +57,22 @@ function onEmitChecked(uuid: UUID) {
   invoke("check_todo", { uuid: uuid }).catch((e) => alert(e));
   updateTodos();
 }
+
+onMounted(() => {
+  dateInterval = setInterval(() => {
+    nowDate.value = new Intl.DateTimeFormat("en-GB", {
+      timeZone: "Asia/Tokyo",
+      year: "numeric",
+      month: "2-digit",
+      day: "2-digit",
+      weekday: "short",
+    }).format(new Date());
+  }, 60000); // 60 * 1000 = 1min
+});
+
+onUnmounted(() => {
+  clearInterval(dateInterval);
+});
 </script>
 
 <template>
