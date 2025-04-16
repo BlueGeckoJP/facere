@@ -12,6 +12,7 @@ const props = defineProps({
 
 const buttonRef = ref();
 const inputRef = ref();
+const dateRef = ref();
 
 function onClick() {
   let input = inputRef.value as HTMLInputElement;
@@ -21,7 +22,13 @@ function onClick() {
       uuid: uuidv4(),
       title: input.value,
       checked: false,
-      deadline: new Date().toISOString(),
+      deadline: new Intl.DateTimeFormat("en-GB", {
+        timeZone: "Asia/Tokyo",
+        year: "numeric",
+        month: "2-digit",
+        day: "2-digit",
+        weekday: "short",
+      }).format((dateRef.value as HTMLInputElement).valueAsDate as Date),
     },
   })
     .then(() => {
@@ -40,6 +47,7 @@ function onClick() {
   <div id="add-todo">
     <button ref="buttonRef" @click="onClick">Add</button>
     <input type="text" placeholder="Title" ref="inputRef" />
+    <input type="date" ref="dateRef" />
   </div>
 </template>
 

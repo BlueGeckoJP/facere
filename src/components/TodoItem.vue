@@ -2,18 +2,11 @@
 import { faTrash } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
 import { invoke } from "@tauri-apps/api/core";
+import { SqlTodo } from "../types";
 
 const props = defineProps({
-  uuid: {
-    type: String,
-    required: true,
-  },
-  title: {
-    type: String,
-    required: true,
-  },
-  checked: {
-    type: Boolean,
+  todo: {
+    type: Object as () => SqlTodo,
     required: true,
   },
   updateTodos: {
@@ -22,14 +15,15 @@ const props = defineProps({
   },
 });
 const checkedEmit = defineEmits(["checked"]);
+const todo = props.todo;
 
 function onClickCheckbox(_: MouseEvent) {
-  checkedEmit("checked", props.uuid);
+  checkedEmit("checked", todo.uuid);
 }
 
 function onClickTrash(_: MouseEvent) {
   confirm("Are you sure you want to delete it?") &&
-    invoke("delete_todo", { uuid: props.uuid }).catch((e) => alert(e));
+    invoke("delete_todo", { uuid: todo.uuid }).catch((e) => alert(e));
 
   props.updateTodos();
 }
@@ -40,13 +34,16 @@ function onClickTrash(_: MouseEvent) {
     <div class="title-container">
       <a
         class="checkbox"
-        :class="{ checked: props.checked }"
+        :class="{ checked: todo.checked }"
         @click="onClickCheckbox"
       ></a>
       <a class="trash" @click="onClickTrash">
         <FontAwesomeIcon :icon="faTrash" />
       </a>
-      <span>{{ props.title }}</span>
+      <span>{{ todo.title }}</span>
+    </div>
+    <div>
+      <span>{{ todo.deadline }}</span>
     </div>
   </div>
 </template>

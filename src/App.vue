@@ -3,22 +3,10 @@ import { invoke } from "@tauri-apps/api/core";
 import { onMounted, onUnmounted, ref } from "vue";
 import AddTodo from "./components/AddTodo.vue";
 import TodoItem from "./components/TodoItem.vue";
+import { SqlTodo, UUID } from "./types";
 
-type SqlTodo = {
-  uuid: string;
-  title: string;
-  checked: boolean;
-  deadline: string;
-};
-
-type TodoState = {
-  title: string;
-};
-
-type UUID = string;
-
-const todoList = ref(new Map<UUID, TodoState>());
-const completedTodoList = ref(new Map<UUID, TodoState>());
+const todoList = ref(new Map<UUID, SqlTodo>());
+const completedTodoList = ref(new Map<UUID, SqlTodo>());
 
 const nowDate = ref(
   new Intl.DateTimeFormat("en-GB", {
@@ -94,9 +82,7 @@ onUnmounted(() => {
       <TodoItem
         v-for="todo in todoList"
         :key="todo[0]"
-        :uuid="todo[0]"
-        :checked="false"
-        :title="todo[1].title"
+        :todo="todo[1]"
         :update-todos="updateTodos"
         @checked="onEmitChecked"
       />
@@ -106,9 +92,7 @@ onUnmounted(() => {
       <TodoItem
         v-for="todo in completedTodoList"
         :key="todo[0]"
-        :uuid="todo[0]"
-        :checked="true"
-        :title="todo[1].title"
+        :todo="todo[1]"
         :update-todos="updateTodos"
         @checked="onEmitChecked"
       />
